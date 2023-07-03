@@ -388,7 +388,7 @@ impl SeleniumManager for ChromeManager {
         ])
     }
 
-    fn discover_browser_version(&mut self) -> Option<String> {
+    fn discover_browser_version(&mut self) -> Result<Option<String>, Box<dyn Error>> {
         let mut commands;
         let mut browser_path = self.get_browser_path().to_string();
         let escaped_browser_path;
@@ -405,7 +405,7 @@ impl SeleniumManager for ChromeManager {
                         ));
                     }
                 }
-                _ => return None,
+                _ => return Ok(None),
             }
         } else {
             escaped_browser_path = self.get_escaped_path(browser_path.to_string());
@@ -419,7 +419,7 @@ impl SeleniumManager for ChromeManager {
                 format_three_args(DASH_DASH_VERSION, "", &browser_path, ""),
             ]
         }
-        self.detect_browser_version(commands)
+        Ok(self.detect_browser_version(commands))
     }
 
     fn get_driver_name(&self) -> &str {

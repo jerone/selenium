@@ -74,23 +74,23 @@ impl SeleniumManager for SafariManager {
         HashMap::from([(BrowserPath::new(MACOS, STABLE), SAFARI_PATH)])
     }
 
-    fn discover_browser_version(&mut self) -> Option<String> {
+    fn discover_browser_version(&mut self) -> Result<Option<String>, Box<dyn Error>> {
         let mut browser_path = self.get_browser_path().to_string();
         if browser_path.is_empty() {
             match self.detect_browser_path() {
                 Some(path) => {
                     browser_path = self.get_escaped_path(path_buf_to_string(path));
                 }
-                _ => return None,
+                _ => return Ok(None),
             }
         }
         let command = if MACOS.is(self.get_os()) {
             vec![format_one_arg(PLIST_COMMAND, &browser_path)]
         } else {
-            return None;
+            return Ok(None);
         };
         self.set_browser_path(SAFARI_FULL_PATH.to_string());
-        self.detect_browser_version(command)
+        Ok(self.detect_browser_version(command))
     }
 
     fn get_driver_name(&self) -> &str {
