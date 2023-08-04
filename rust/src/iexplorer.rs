@@ -94,7 +94,7 @@ impl SeleniumManager for IExplorerManager {
         )])
     }
 
-    fn discover_browser_version(&mut self) -> Option<String> {
+    fn discover_browser_version(&mut self) -> Result<Option<String>, Box<dyn Error>> {
         let commands;
         let mut browser_path = self.get_browser_path().to_string();
         let escaped_browser_path;
@@ -118,7 +118,7 @@ impl SeleniumManager for IExplorerManager {
             escaped_browser_path = self.get_escaped_path(browser_path.to_string());
             commands = vec![format_one_arg(WMIC_COMMAND, &escaped_browser_path)];
         }
-        self.detect_browser_version(commands)
+        Ok(self.detect_browser_version(commands))
     }
 
     fn get_driver_name(&self) -> &str {
